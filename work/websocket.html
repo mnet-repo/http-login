@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>我是登录页</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <div>
+    <label for="loginusername">账号</label>
+    <input type="text" id="loginusername" placeholder="账号">
+  </div>
+
+  <div>
+    <label for="loginpassword">密码</label>
+    <input type="password" id="loginpassword" placeholder="密码">
+  </div>
+
+  <div>
+    <button type="button" id="info_submit">登录</button>
+  </div>
+  <div id="message"></div>
+</body>
+
+</html>
+<script>
+  $(document).ready(function () {
+    var websocket = null
+    if ('WebSocket' in window) {
+      websocket = new WebSocket("wss://echo.websocket.org")
+    }
+    else {
+      alert('当前浏览器 Not support websocket')
+    }
+
+    //连接发生错误的回调方法
+    websocket.onerror = function () {
+      setMessageInnerHTML("WebSocket连接发生错误")
+    }
+
+    websocket.onopen = function () {
+      setMessageInnerHTML("WebSocket连接成功")
+    }
+
+    websocket.onmessage = function (event) {
+      setMessageInnerHTML(event.data)
+    }
+
+    websocket.onclose = function () {
+      setMessageInnerHTML("WebSocket连接关闭")
+      websocket.close()
+    }
+
+    window.onbeforeunload = function () {
+      websocket.close()
+    }
+
+    function setMessageInnerHTML(innerHTML) {
+      document.getElementById('message').innerHTML += innerHTML + '<br/>'
+    }
+
+    $("#info_submit").click(function () {
+      var data = JSON.stringify({
+        username: $('#loginusername').val(),
+        password: $('#loginpassword').val()
+      })
+      websocket.send(data)
+      alert("登陆成功！")
+    })
+  })
+</script>

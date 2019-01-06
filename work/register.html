@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>我是注册页</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <label for="username">账号</label>
+        <input type="text" name="username" id="username" placeholder="账号">
+    </div>
+    <div>
+        <label for="password">密码</label>
+        <input type="password" name="password" id="password" placeholder="密码">
+    </div>
+    <div>
+        <label for="confirm_password">再次输入密码</label>
+        <input type="password" name="confirm_password" id="confirm_password" placeholder="再次输入密码">
+    </div>
+    <div>
+        <button type="button" class="btn btn-default" id="login_submit">注册</button>
+    </div>
+</body>
+
+</html>
+<style>
+    .error {
+        color: brown
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $("#login_submit").click(function () {
+            var username = $('#username').val()
+            var password = $('#password').val()
+            var confirm_password = $('#confirm_password').val()
+            if(!username || !password || !confirm_password) {
+                alert("请输入必填项！")
+                return false
+            }
+            if(password !== confirm_password) {
+                alert("两次输入密码不一致！")
+                return false
+            }
+            $.ajax({
+                type: "post",
+                url: "http://localhost:8080/register",
+                dataType: "json",
+                data: { username: username, password: password },
+                success: function (data) {
+                    console.log(data)
+                    if (data) {
+                        if (data.message == false) {
+                            alert('账号已存在')
+                            window.location.href = "#"
+                        } else {
+                            alert('注册成功')
+                            window.location.href = "http://localhost:8080"
+                        }
+                    }
+                }
+            })
+        })
+    })
+</script>
